@@ -1,0 +1,3120 @@
+{
+  "openapi": "3.0.2",
+  "info": {
+    "title": "Unsecured Lending CL Postback Management API",
+    "description": "- **API Type:** INTERNAL\n- **API Risk Classification:** HIGH\n- **API Owner (business):** E00509767\n- **API Owner (technical):** E00509767    \n- **Overview:** This is an internal API which is built to handle postback calls from Experian. This API will pass thourgh the Postback request received from Experian to APPLY. \n",
+    "contact": {
+      "name": "Barclays API Support Team",
+      "email": "api@barclays.com"
+    },
+    "version": "v1.0"
+  },
+  "servers": [
+    {
+      "url": "/v1",
+      "description": "Server URL"
+    }
+  ],
+  "security": [
+    {
+      "InternalBasicAuth": []
+    },
+    {
+      "InternalTiaaUsRopcAuth": []
+    }
+  ],
+  "tags": [
+    {
+      "name": "loansRef",
+      "description": "BCUS Loans APIs"
+    }
+  ],
+  "externalDocs": {
+    "description": "Find more information here.",
+    "url": "https://confluence.barcapint.com/display/RFTBUKTECT/USCB+CL+API"
+  },
+  "paths": {
+    "/postback-applications": {
+      "summary": "Operations on all accounts",
+      "description": "Operations on all accounts.",
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/Correlation-ID"
+        },
+        {
+          "$ref": "#/components/parameters/X-B3-TraceId"
+        },
+        {
+          "$ref": "#/components/parameters/X-B3-SpanId"
+        }
+      ],
+      "post": {
+        "summary": "Loans Postback",
+        "description": "Loans Postback.\n",
+        "operationId": "loansDecisionPostback",
+        "deprecated": false,
+        "tags": [
+          "loansRef"
+        ],
+        "requestBody": {
+          "$ref": "#/components/requestBodies/PostbackRequest"
+        },
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/PostbackResponse"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          },
+          "503": {
+            "$ref": "#/components/responses/ServiceUnavailable"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "InternalBasicAuth": {
+        "type": "http",
+        "description": "Legacy Basic Authentication used by USCB for internal APIs",
+        "scheme": "basic"
+      },
+      "InternalTiaaUsRopcAuth": {
+        "type": "oauth2",
+        "description": "OAuth2.0 Resource Owner Passard Credentials (ROPC) Grant authentication using TIAA-US for internal APIs",
+        "flows": {
+          "password": {
+            "tokenUrl": "https://token.tiaa-dev.us.barclays.intranet:8443/as/token.oauth2",
+            "scopes": {
+              "read": "read only",
+              "write": "write only"
+            }
+          }
+        }
+      }
+    },
+    "schemas": {
+      "LoansApplicationRequest": {
+        "$ref": "#/components/schemas/PostbackRequest"
+      },
+      "LoansApplicationResponse": {
+        "$ref": "#/components/schemas/PostbackResponse"
+      },
+      "reqVerification": {
+        "type": "object",
+        "additionalProperties": false,
+        "description": "Postback Request verification",
+        "nullable": true,
+        "deprecated": false,
+        "properties": {
+          "verificationStatus": {
+            "type": "string",
+            "example": "str",
+            "nullable": true,
+            "minLength": 0,
+            "maxLength": 3,
+            "pattern": "^[a-zA-Z0-9 \\/_.-]{0,3}$"
+          },
+          "veridCustom1": {
+            "type": "string",
+            "example": "string",
+            "nullable": true,
+            "minLength": 0,
+            "maxLength": 10,
+            "pattern": "^[a-zA-Z0-9 \\/_.-]{0,10}$"
+          },
+          "veridCustom2": {
+            "type": "string",
+            "example": "string",
+            "nullable": true,
+            "minLength": 0,
+            "maxLength": 10,
+            "pattern": "^[a-zA-Z0-9 \\/_.-]{0,10}$"
+          },
+          "verificationReq": {
+            "type": "string",
+            "example": "Y",
+            "nullable": true,
+            "minLength": 0,
+            "maxLength": 1,
+            "pattern": "^[a-zA-Z0-9 \\/_.-]{0,1}$"
+          }
+        }
+      },
+      "reasonReq": {
+        "type": "object",
+        "additionalProperties": false,
+        "description": "Reason",
+        "nullable": true,
+        "properties": {
+          "code": {
+            "type": "string",
+            "nullable": true,
+            "pattern": "^[a-zA-Z0-9 \\/_.-]{0,3}$",
+            "minLength": 0,
+            "maxLength": 3,
+            "example": "",
+            "description": "Code"
+          },
+          "text": {
+            "type": "string",
+            "nullable": true,
+            "pattern": "^[a-zA-Z0-9 \\/_.-]{0,200}$",
+            "minLength": 0,
+            "maxLength": 200,
+            "example": "",
+            "description": "Text"
+          }
+        }
+      },
+      "factorReq": {
+        "type": "object",
+        "additionalProperties": false,
+        "description": "Factor",
+        "nullable": true,
+        "properties": {
+          "code": {
+            "type": "string",
+            "nullable": true,
+            "pattern": "^[a-zA-Z0-9 \\/_.-]{0,3}$",
+            "minLength": 0,
+            "maxLength": 3,
+            "example": "",
+            "description": "Code"
+          },
+          "text": {
+            "type": "string",
+            "nullable": true,
+            "pattern": "^[a-zA-Z0-9 \\/_.-]{0,100}$",
+            "minLength": 0,
+            "maxLength": 100,
+            "example": "",
+            "description": "Text"
+          }
+        }
+      },
+      "bureauReq": {
+        "type": "object",
+        "additionalProperties": false,
+        "description": "Bureau",
+        "nullable": true,
+        "properties": {
+          "name": {
+            "type": "string",
+            "nullable": true,
+            "pattern": "^[a-zA-Z0-9 \\/_.-]{0,36}$",
+            "minLength": 0,
+            "maxLength": 36,
+            "example": "TransUnion",
+            "description": "Name"
+          },
+          "address": {
+            "type": "string",
+            "nullable": true,
+            "pattern": "^[a-zA-Z0-9 \\/,_.-]{0,32}$",
+            "minLength": 0,
+            "maxLength": 32,
+            "example": "string"
+          },
+          "csz": {
+            "type": "string",
+            "nullable": true,
+            "pattern": "^[a-zA-Z0-9 \\/,_.-]{0,34}$",
+            "minLength": 0,
+            "maxLength": 34,
+            "example": "Chester, PA 19013",
+            "description": "CSZ"
+          },
+          "phone": {
+            "type": "string",
+            "nullable": true,
+            "pattern": "^[a-zA-Z0-9 \\/_.-]{0,14}$",
+            "minLength": 0,
+            "maxLength": 14,
+            "example": "1-800-916-8800",
+            "description": "Phone"
+          },
+          "url": {
+            "type": "string",
+            "nullable": true,
+            "pattern": "^[a-zA-Z0-9 \\/_.-]{0,40}$",
+            "minLength": 0,
+            "maxLength": 40,
+            "example": "www.transunion.com",
+            "description": "URL"
+          }
+        }
+      },
+      "reqLetter": {
+        "type": "object",
+        "additionalProperties": false,
+        "description": "Postback Request letter data",
+        "nullable": true,
+        "deprecated": false,
+        "properties": {
+          "fico": {
+            "type": "integer",
+            "nullable": true,
+            "minimum": -999999,
+            "maximum": 999999
+          },
+          "clientId": {
+            "type": "integer",
+            "nullable": true,
+            "minimum": -9999,
+            "maximum": 9999
+          },
+          "correspondenceId": {
+            "type": "string",
+            "example": "string",
+            "nullable": true,
+            "minLength": 0,
+            "maxLength": 6,
+            "pattern": "^[a-zA-Z0-9 \\/_.-]{0,6}$"
+          },
+          "operatorId": {
+            "type": "string",
+            "example": "string",
+            "nullable": true,
+            "minLength": 0,
+            "maxLength": 6,
+            "pattern": "^[a-zA-Z0-9 \\/_.-]{0,6}$"
+          },
+          "primaryCustomerName": {
+            "type": "string",
+            "example": "string",
+            "nullable": true,
+            "minLength": 0,
+            "maxLength": 36,
+            "pattern": "^[a-zA-Z0-9 \\/_.-]{0,36}$"
+          },
+          "appAddressLine1": {
+            "type": "string",
+            "example": "string",
+            "nullable": true,
+            "minLength": 0,
+            "maxLength": 32,
+            "pattern": "^[a-zA-Z0-9 \\/_.-]{0,32}$"
+          },
+          "appAddressLine2": {
+            "type": "string",
+            "example": "string",
+            "nullable": true,
+            "minLength": 0,
+            "maxLength": 32,
+            "pattern": "^[a-zA-Z0-9 \\/_.-]{0,32}$"
+          },
+          "appCity": {
+            "type": "string",
+            "example": "string",
+            "nullable": true,
+            "minLength": 0,
+            "maxLength": 20,
+            "pattern": "^[a-zA-Z0-9 \\/_.-]{0,20}$"
+          },
+          "appState": {
+            "type": "string",
+            "example": "st",
+            "nullable": true,
+            "minLength": 0,
+            "maxLength": 2,
+            "pattern": "^[a-zA-Z0-9 \\/_.-]{0,2}$"
+          },
+          "zipPlus4": {
+            "type": "string",
+            "example": "string",
+            "nullable": true,
+            "minLength": 0,
+            "maxLength": 10,
+            "pattern": "^[a-zA-Z0-9 \\/_.-]{0,10}$"
+          },
+          "countryName": {
+            "type": "string",
+            "example": "string",
+            "nullable": true,
+            "minLength": 0,
+            "maxLength": 25,
+            "pattern": "^[a-zA-Z0-9 \\/_.-]{0,25}$"
+          },
+          "tsysProductCode": {
+            "type": "string",
+            "example": "st",
+            "nullable": true,
+            "minLength": 0,
+            "maxLength": 2,
+            "pattern": "^[a-zA-Z0-9 \\/_.-]{0,2}$"
+          },
+          "rdapPartnerId": {
+            "type": "string",
+            "example": "str",
+            "nullable": true,
+            "minLength": 0,
+            "maxLength": 3,
+            "pattern": "^[a-zA-Z0-9 \\/_.-]{0,3}$"
+          },
+          "corrHoldCode": {
+            "type": "string",
+            "example": "str",
+            "nullable": true,
+            "minLength": 0,
+            "maxLength": 3,
+            "pattern": "^[a-zA-Z0-9 \\/_.-]{0,3}$"
+          },
+          "languageCode": {
+            "type": "string",
+            "example": "str",
+            "nullable": true,
+            "minLength": 0,
+            "maxLength": 3,
+            "pattern": "^[a-zA-Z0-9 \\/_.-]{0,3}$"
+          },
+          "letterRequestDate": {
+            "type": "string",
+            "example": "2024-05-29",
+            "nullable": true,
+            "minLength": 0,
+            "maxLength": 10,
+            "pattern": "^[0-9-]{0,10}$"
+          },
+          "acqAppNum": {
+            "type": "string",
+            "example": "string",
+            "nullable": true,
+            "minLength": 0,
+            "maxLength": 9,
+            "pattern": "^[a-zA-Z0-9 \\/_.-]{0,9}$"
+          },
+          "declinePhone": {
+            "type": "string",
+            "example": "string",
+            "nullable": true,
+            "minLength": 0,
+            "maxLength": 14,
+            "pattern": "^[a-zA-Z0-9 \\/_.-]{0,14}$"
+          },
+          "printDeclinePhone": {
+            "type": "string",
+            "nullable": true,
+            "example": "Y",
+            "enum": [
+              "Y",
+              "N",
+              ""
+            ]
+          },
+          "declineAddressLine1": {
+            "type": "string",
+            "example": "string",
+            "nullable": true,
+            "minLength": 0,
+            "maxLength": 32,
+            "pattern": "^[a-zA-Z0-9 \\/_.-]{0,32}$"
+          },
+          "declineAddressLine2": {
+            "type": "string",
+            "example": "string",
+            "nullable": true,
+            "minLength": 0,
+            "maxLength": 32,
+            "pattern": "^[a-zA-Z0-9 \\/_.-]{0,32}$"
+          },
+          "declineState": {
+            "type": "string",
+            "example": "st",
+            "nullable": true,
+            "minLength": 0,
+            "maxLength": 2,
+            "pattern": "^[a-zA-Z0-9 \\/_.-]{0,2}$"
+          },
+          "declineCity": {
+            "type": "string",
+            "nullable": true,
+            "minLength": 0,
+            "maxLength": 20,
+            "pattern": "^[a-zA-Z0-9 \\/_.-]{0,20}$"
+          },
+          "declineZip": {
+            "type": "string",
+            "example": "string",
+            "nullable": true,
+            "minLength": 0,
+            "maxLength": 10,
+            "pattern": "^[a-zA-Z0-9 \\/_.-]{0,10}$"
+          },
+          "declineHours": {
+            "type": "string",
+            "example": "string",
+            "nullable": true,
+            "minLength": 0,
+            "maxLength": 100,
+            "pattern": "^[a-zA-Z0-9 \\/_.-]{0,100}$"
+          },
+          "printDoddFrankFlag": {
+            "type": "string",
+            "nullable": true,
+            "example": "Y",
+            "enum": [
+              "Y",
+              "N",
+              ""
+            ]
+          },
+          "bureauCounter": {
+            "type": "integer",
+            "nullable": true,
+            "minimum": -99,
+            "maximum": 99,
+            "example": 0
+          },
+          "cbFicoScore": {
+            "type": "integer",
+            "nullable": true,
+            "minimum": -999,
+            "maximum": 999,
+            "example": 0
+          },
+          "scoreDate": {
+            "type": "string",
+            "example": "2024-05-29",
+            "nullable": true,
+            "minLength": 0,
+            "maxLength": 10,
+            "pattern": "^[0-9-]{0,10}$"
+          },
+          "reasons": {
+            "type": "object",
+            "additionalProperties": false,
+            "description": "Reasons",
+            "nullable": true,
+            "properties": {
+              "reason": {
+                "type": "array",
+                "nullable": true,
+                "description": "Reason",
+                "minItems": 0,
+                "maxItems": 4,
+                "items": {
+                  "$ref": "#/components/schemas/reasonReq"
+                }
+              }
+            }
+          },
+          "factors": {
+            "type": "object",
+            "additionalProperties": false,
+            "description": "Factors",
+            "nullable": true,
+            "properties": {
+              "factor": {
+                "type": "array",
+                "nullable": true,
+                "description": "Factor",
+                "minItems": 0,
+                "maxItems": 5,
+                "items": {
+                  "$ref": "#/components/schemas/factorReq"
+                }
+              }
+            }
+          },
+          "bureaus": {
+            "type": "object",
+            "additionalProperties": false,
+            "description": "Bureaus",
+            "nullable": true,
+            "properties": {
+              "bureau": {
+                "type": "array",
+                "nullable": true,
+                "description": "Bureau",
+                "minItems": 0,
+                "maxItems": 4,
+                "items": {
+                  "$ref": "#/components/schemas/bureauReq"
+                }
+              }
+            }
+          }
+        }
+      },
+      "reqCommunication": {
+        "type": "object",
+        "additionalProperties": false,
+        "description": "Postback Request communication",
+        "nullable": true,
+        "deprecated": false,
+        "properties": {
+          "letter": {
+            "$ref": "#/components/schemas/reqLetter"
+          },
+          "fraudDoc1": {
+            "type": "string",
+            "example": "string",
+            "nullable": true,
+            "minLength": 0,
+            "maxLength": 50,
+            "pattern": "^[a-zA-Z0-9 \\/_.-]{0,50}$"
+          },
+          "fraudDoc2": {
+            "type": "string",
+            "example": "string",
+            "nullable": true,
+            "minLength": 0,
+            "maxLength": 50,
+            "pattern": "^[a-zA-Z0-9 \\/_.-]{0,50}$"
+          },
+          "fraudDoc3": {
+            "type": "string",
+            "example": "string",
+            "nullable": true,
+            "minLength": 0,
+            "maxLength": 50,
+            "pattern": "^[a-zA-Z0-9 \\/_.-]{0,50}$"
+          },
+          "fraudDoc4": {
+            "type": "string",
+            "example": "string",
+            "nullable": true,
+            "minLength": 0,
+            "maxLength": 50,
+            "pattern": "^[a-zA-Z0-9 \\/_.-]{0,50}$"
+          },
+          "fraudDoc5": {
+            "type": "string",
+            "example": "string",
+            "nullable": true,
+            "minLength": 0,
+            "maxLength": 50,
+            "pattern": "^[a-zA-Z0-9 \\/_.-]{0,50}$"
+          },
+          "addressDocRequested": {
+            "type": "string",
+            "example": "Y",
+            "nullable": true,
+            "minLength": 0,
+            "maxLength": 1,
+            "pattern": "^[a-zA-Z0-9 \\/_.-]{0,1}$"
+          },
+          "addressDocReceived": {
+            "type": "string",
+            "example": "Y",
+            "nullable": true,
+            "minLength": 0,
+            "maxLength": 1,
+            "pattern": "^[a-zA-Z0-9 \\/_.-]{0,1}$"
+          },
+          "addressDocNotAvailable": {
+            "type": "string",
+            "example": "Y",
+            "nullable": true,
+            "minLength": 0,
+            "maxLength": 1,
+            "pattern": "^[a-zA-Z0-9 \\/_.-]{0,1}$"
+          },
+          "assetDocRequested": {
+            "type": "string",
+            "example": "Y",
+            "nullable": true,
+            "minLength": 0,
+            "maxLength": 1,
+            "pattern": "^[a-zA-Z0-9 \\/_.-]{0,1}$"
+          },
+          "assetDocReceived": {
+            "type": "string",
+            "example": "Y",
+            "nullable": true,
+            "minLength": 0,
+            "maxLength": 1,
+            "pattern": "^[a-zA-Z0-9 \\/_.-]{0,1}$"
+          },
+          "assetDocNotAvailable": {
+            "type": "string",
+            "example": "Y",
+            "nullable": true,
+            "minLength": 0,
+            "maxLength": 1,
+            "pattern": "^[a-zA-Z0-9 \\/_.-]{0,1}$"
+          },
+          "incomeDocRequested": {
+            "type": "string",
+            "example": "Y",
+            "nullable": true,
+            "minLength": 0,
+            "maxLength": 1,
+            "pattern": "^[a-zA-Z0-9 \\/_.-]{0,1}$"
+          },
+          "incomeDocReceived": {
+            "type": "string",
+            "example": "Y",
+            "nullable": true,
+            "minLength": 0,
+            "maxLength": 1,
+            "pattern": "^[a-zA-Z0-9 \\/_.-]{0,1}$"
+          },
+          "incomeDocNotAvailable": {
+            "type": "string",
+            "example": "Y",
+            "nullable": true,
+            "minLength": 0,
+            "maxLength": 1,
+            "pattern": "^[a-zA-Z0-9 \\/_.-]{0,1}$"
+          },
+          "fraudDocReceived": {
+            "type": "string",
+            "example": "Y",
+            "nullable": true,
+            "minLength": 0,
+            "maxLength": 1,
+            "pattern": "^[a-zA-Z0-9 \\/_.-]{0,1}$"
+          },
+          "fraudDocRequested": {
+            "type": "string",
+            "example": "Y",
+            "nullable": true,
+            "minLength": 0,
+            "maxLength": 1,
+            "pattern": "^[a-zA-Z0-9 \\/_.-]{0,1}$"
+          },
+          "fraudDocNotAvailable": {
+            "type": "string",
+            "example": "Y",
+            "nullable": true,
+            "minLength": 0,
+            "maxLength": 1,
+            "pattern": "^[a-zA-Z0-9 \\/_.-]{0,1}$"
+          },
+          "allDocumentProvided": {
+            "type": "string",
+            "example": "Y",
+            "nullable": true,
+            "minLength": 0,
+            "maxLength": 1,
+            "pattern": "^[a-zA-Z0-9 \\/_.-]{0,1}$"
+          },
+          "conversationNeeded": {
+            "type": "string",
+            "example": "Y",
+            "nullable": true,
+            "minLength": 0,
+            "maxLength": 1,
+            "pattern": "^[a-zA-Z0-9 \\/_.-]{0,1}$"
+          },
+          "conversationType": {
+            "type": "string",
+            "example": "Y",
+            "nullable": true,
+            "minLength": 0,
+            "maxLength": 1,
+            "pattern": "^[a-zA-Z0-9 \\/_.-]{0,1}$"
+          }
+        }
+      },
+      "reqCreditInfo": {
+        "type": "object",
+        "additionalProperties": false,
+        "description": "Postback Request credit Info",
+        "nullable": true,
+        "deprecated": false,
+        "properties": {
+          "credBureau": {
+            "type": "string",
+            "example": "Y",
+            "nullable": true,
+            "minLength": 0,
+            "maxLength": 1,
+            "pattern": "^[a-zA-Z0-9 \\/_.-]{0,1}$"
+          },
+          "ficoDate": {
+            "type": "string",
+            "nullable": true,
+            "minLength": 0,
+            "maxLength": 10,
+            "pattern": "^[0-9-]{0,10}$",
+            "example": "2022-02-14",
+            "description": "FICO Date"
+          },
+          "ficoFactor1": {
+            "type": "integer",
+            "nullable": true,
+            "minimum": -99999,
+            "maximum": 99999,
+            "example": 0,
+            "description": "FICO Factor 1"
+          },
+          "ficoFactor2": {
+            "type": "integer",
+            "nullable": true,
+            "minimum": -99999,
+            "maximum": 99999,
+            "example": 0,
+            "description": "FICO Factor 2"
+          },
+          "ficoFactor3": {
+            "type": "integer",
+            "nullable": true,
+            "minimum": -99999,
+            "maximum": 99999,
+            "example": 0,
+            "description": "FICO Factor 3"
+          },
+          "ficoFactor4": {
+            "type": "integer",
+            "nullable": true,
+            "minimum": -99999,
+            "maximum": 99999,
+            "example": 0,
+            "description": "FICO Factor 4"
+          },
+          "fico": {
+            "type": "integer",
+            "nullable": true,
+            "minimum": -9999,
+            "maximum": 9999
+          },
+          "idaCo50Date": {
+            "type": "string",
+            "nullable": true,
+            "minLength": 0,
+            "maxLength": 10,
+            "pattern": "^[0-9-]{0,10}$",
+            "example": "2022-02-14"
+          },
+          "idaCo50Score": {
+            "type": "string",
+            "nullable": true,
+            "minLength": 0,
+            "maxLength": 3,
+            "pattern": "^[a-zA-Z0-9 \\/_.-]{0,3}$",
+            "example": "0"
+          },
+          "idaCo50Time": {
+            "type": "string",
+            "nullable": true,
+            "minLength": 0,
+            "maxLength": 8,
+            "pattern": "^[a-zA-Z0-9 \\/_.-]{0,8}$",
+            "example": "0"
+          },
+          "inqScoreImpact": {
+            "type": "string",
+            "nullable": true,
+            "minLength": 0,
+            "maxLength": 1,
+            "pattern": "^[a-zA-Z0-9 \\/_.-]{0,1}$",
+            "example": "0"
+          },
+          "idaCo50ResultCode1": {
+            "type": "string",
+            "nullable": true,
+            "minLength": 0,
+            "maxLength": 3,
+            "pattern": "^[a-zA-Z0-9 \\/_.-]{0,3}$",
+            "example": "0"
+          },
+          "idaCo50ResultCode2": {
+            "type": "string",
+            "nullable": true,
+            "minLength": 0,
+            "maxLength": 3,
+            "pattern": "^[a-zA-Z0-9 \\/_.-]{0,3}$",
+            "example": "0"
+          },
+          "idaCo50ResultCode3": {
+            "type": "string",
+            "nullable": true,
+            "minLength": 0,
+            "maxLength": 3,
+            "pattern": "^[a-zA-Z0-9 \\/_.-]{0,3}$",
+            "example": "0"
+          },
+          "idaCo50ResultCode4": {
+            "type": "string",
+            "nullable": true,
+            "minLength": 0,
+            "maxLength": 3,
+            "pattern": "^[a-zA-Z0-9 \\/_.-]{0,3}$",
+            "example": "0"
+          },
+          "idaCo50ResultCode5": {
+            "type": "string",
+            "nullable": true,
+            "minLength": 0,
+            "maxLength": 3,
+            "pattern": "^[a-zA-Z0-9 \\/_.-]{0,3}$",
+            "example": "0"
+          },
+          "idaCo50ResultCode6": {
+            "type": "string",
+            "nullable": true,
+            "minLength": 0,
+            "maxLength": 3,
+            "pattern": "^[a-zA-Z0-9 \\/_.-]{0,3}$",
+            "example": "0"
+          }
+        }
+      },
+      "errorcodeval": {
+        "type": "string",
+        "nullable": true,
+        "minLength": 0,
+        "maxLength": 4,
+        "pattern": "^[a-zA-Z0-9 \\/_.-]{0,4}$",
+        "example": "0000",
+        "description": "error code value"
+      },
+      "errorReq": {
+        "type": "object",
+        "additionalProperties": false,
+        "description": "Postback Request aplication Info",
+        "nullable": true,
+        "deprecated": false,
+        "properties": {
+          "errorCode": {
+            "type": "array",
+            "nullable": true,
+            "minItems": 0,
+            "maxItems": 10,
+            "description": "Error code",
+            "items": {
+              "$ref": "#/components/schemas/errorcodeval"
+            }
+          },
+          "errorMsg": {
+            "type": "string",
+            "example": "string",
+            "nullable": true,
+            "minLength": 0,
+            "maxLength": 120,
+            "pattern": "^[a-zA-Z0-9 \\/_.-]{0,120}$"
+          }
+        }
+      },
+      "reqCreditAcctInfo": {
+        "type": "object",
+        "additionalProperties": false,
+        "description": "Postback Request credit Acct Info",
+        "nullable": true,
+        "deprecated": false,
+        "properties": {
+          "overrideCd": {
+            "type": "string",
+            "example": "st",
+            "nullable": true,
+            "minLength": 0,
+            "maxLength": 2,
+            "pattern": "^[a-zA-Z0-9 \\/_.-]{0,2}$"
+          },
+          "pcApprRgBDate": {
+            "type": "string",
+            "example": "2024-05-29",
+            "nullable": true,
+            "minLength": 0,
+            "maxLength": 10,
+            "pattern": "^[0-9-]{0,10}$"
+          },
+          "callLetters": {
+            "type": "string",
+            "example": "Y",
+            "nullable": true,
+            "minLength": 0,
+            "maxLength": 1,
+            "pattern": "^[a-zA-Z0-9 \\/_.-]{0,1}$"
+          },
+          "reactivationFlag": {
+            "type": "string",
+            "nullable": true,
+            "example": "Y",
+            "enum": [
+              "Y",
+              "N",
+              ""
+            ]
+          },
+          "reactivationDate": {
+            "type": "string",
+            "example": "2024-05-29",
+            "nullable": true,
+            "minLength": 0,
+            "maxLength": 10,
+            "pattern": "^[0-9-]{0,10}$"
+          },
+          "reconsiderFlag": {
+            "type": "string",
+            "example": "Y",
+            "nullable": true,
+            "minLength": 0,
+            "maxLength": 1,
+            "pattern": "^[a-zA-Z0-9 \\/_.-]{0,1}$"
+          },
+          "reconsiderDate": {
+            "type": "string",
+            "example": "2024-05-29",
+            "nullable": true,
+            "minLength": 0,
+            "maxLength": 10,
+            "pattern": "^[0-9-]{0,10}$"
+          },
+          "counterOfferFlag": {
+            "type": "string",
+            "nullable": true,
+            "example": "Y",
+            "enum": [
+              "Y",
+              "N",
+              ""
+            ]
+          },
+          "counterOfferDate": {
+            "type": "string",
+            "example": "2024-05-29",
+            "nullable": true,
+            "minLength": 0,
+            "maxLength": 10,
+            "pattern": "^[0-9-]{0,10}$"
+          },
+          "offerRejectFlag": {
+            "type": "string",
+            "example": "Y",
+            "nullable": true,
+            "minLength": 0,
+            "maxLength": 1,
+            "pattern": "^[a-zA-Z0-9 \\/_.-]{0,1}$"
+          },
+          "offerRejectDate": {
+            "type": "string",
+            "example": "2024-05-29",
+            "nullable": true,
+            "minLength": 0,
+            "maxLength": 10,
+            "pattern": "^[0-9-]{0,10}$"
+          },
+          "creditPending": {
+            "type": "string",
+            "nullable": true,
+            "example": "Y",
+            "enum": [
+              "Y",
+              "N",
+              ""
+            ]
+          },
+          "fraudPending": {
+            "type": "string",
+            "example": "Y",
+            "nullable": true,
+            "minLength": 0,
+            "maxLength": 1,
+            "pattern": "^[a-zA-Z0-9 \\/_.-]{0,1}$"
+          },
+          "offerExtendedDate": {
+            "type": "string",
+            "example": "2024-05-29",
+            "nullable": true,
+            "minLength": 0,
+            "maxLength": 10,
+            "pattern": "^[0-9-]{0,10}$"
+          },
+          "offerLapseDate": {
+            "type": "string",
+            "example": "2024-05-29",
+            "nullable": true,
+            "minLength": 0,
+            "maxLength": 10,
+            "pattern": "^[0-9-]{0,10}$"
+          },
+          "ficoFactor1": {
+            "type": "integer",
+            "nullable": true,
+            "minimum": -99999,
+            "maximum": 99999
+          },
+          "ficoFactor2": {
+            "type": "integer",
+            "nullable": true,
+            "minimum": -99999,
+            "maximum": 99999
+          },
+          "ficoFactor3": {
+            "type": "integer",
+            "nullable": true,
+            "minimum": -99999,
+            "maximum": 99999
+          },
+          "ficoFactor4": {
+            "type": "integer",
+            "nullable": true,
+            "minimum": -99999,
+            "maximum": 99999
+          },
+          "ficoDate": {
+            "type": "string",
+            "example": "2024-05-29",
+            "nullable": true,
+            "minLength": 0,
+            "maxLength": 10,
+            "pattern": "^[0-9-]{0,10}$"
+          },
+          "clOfferStatus": {
+            "type": "string",
+            "example": "OA",
+            "nullable": true,
+            "minLength": 0,
+            "maxLength": 2,
+            "pattern": "^[a-zA-Z0-9 \\/_.-]{0,2}$"
+          },
+          "decStatus": {
+            "type": "string",
+            "example": "Y",
+            "nullable": true,
+            "minLength": 0,
+            "maxLength": 1,
+            "pattern": "^[a-zA-Z0-9 \\/_.-]{0,1}$"
+          },
+          "finalApr": {
+            "type": "number",
+            "nullable": true,
+            "minimum": -999.99,
+            "maximum": 999.99,
+            "multipleOf": 0.01
+          },
+          "finalDisbursContAmt": {
+            "type": "number",
+            "nullable": true,
+            "minimum": -999999999.99,
+            "maximum": 999999999.99,
+            "multipleOf": 0.01
+          },
+          "finalDisbursmtInd": {
+            "type": "string",
+            "example": "Y",
+            "nullable": true,
+            "minLength": 0,
+            "maxLength": 1,
+            "pattern": "^[a-zA-Z0-9 \\/_.-]{0,1}$"
+          },
+          "finalLoanAmount": {
+            "type": "number",
+            "nullable": true,
+            "minimum": -999999999.99,
+            "maximum": 999999999.99,
+            "multipleOf": 0.01
+          },
+          "finalMmP": {
+            "type": "number",
+            "nullable": true,
+            "minimum": -999999.99,
+            "maximum": 999999.99,
+            "multipleOf": 0.01
+          },
+          "finalTermInterval": {
+            "type": "integer",
+            "nullable": true,
+            "minimum": -999,
+            "maximum": 999
+          },
+          "letterCd": {
+            "type": "string",
+            "example": "stri",
+            "nullable": true,
+            "minLength": 0,
+            "maxLength": 4,
+            "pattern": "^[a-zA-Z0-9 \\/_.-]{0,4}$"
+          },
+          "preciseIdScore": {
+            "type": "string",
+            "example": "stri",
+            "nullable": true,
+            "minLength": 0,
+            "maxLength": 6,
+            "pattern": "^[a-zA-Z0-9 \\/_.-]{0,6}$"
+          },
+          "recomDecisionStatus": {
+            "type": "string",
+            "example": "stri",
+            "nullable": true,
+            "minLength": 0,
+            "maxLength": 4,
+            "pattern": "^[a-zA-Z0-9 \\/_.-]{0,4}$"
+          },
+          "recommendedDecRsnCd": {
+            "type": "string",
+            "example": "stri",
+            "nullable": true,
+            "minLength": 0,
+            "maxLength": 4,
+            "pattern": "^[a-zA-Z0-9 \\/_.-]{0,4}$"
+          },
+          "requestTimeStamp": {
+            "type": "string",
+            "example": "string",
+            "nullable": true,
+            "minLength": 0,
+            "maxLength": 19,
+            "pattern": "^[a-zA-Z0-9 \\/_.-]{0,19}$"
+          },
+          "responseTimeStamp": {
+            "type": "string",
+            "example": "string",
+            "nullable": true,
+            "minLength": 0,
+            "maxLength": 19,
+            "pattern": "^[a-zA-Z0-9 \\/_.-]{0,19}$"
+          },
+          "appDate": {
+            "type": "string",
+            "example": "2024-05-29",
+            "nullable": true,
+            "minLength": 0,
+            "maxLength": 10,
+            "pattern": "^[0-9-]{0,10}$"
+          },
+          "riskGroup": {
+            "type": "string",
+            "example": "st",
+            "nullable": true,
+            "minLength": 0,
+            "maxLength": 2,
+            "pattern": "^[a-zA-Z0-9 \\/_.-]{0,2}$"
+          },
+          "pd19Score": {
+            "type": "number",
+            "nullable": true,
+            "minimum": -999999.999999,
+            "maximum": 999999.999999,
+            "multipleOf": 0.000001
+          },
+          "communication": {
+            "$ref": "#/components/schemas/reqCommunication"
+          },
+          "creditInfo": {
+            "$ref": "#/components/schemas/reqCreditInfo"
+          },
+          "error": {
+            "$ref": "#/components/schemas/errorReq"
+          }
+        }
+      },
+      "reqEmployment": {
+        "type": "object",
+        "additionalProperties": false,
+        "description": "Postback Request employment",
+        "nullable": true,
+        "deprecated": false,
+        "properties": {
+          "sourceOfIncome": {
+            "type": "string",
+            "example": "string",
+            "nullable": true,
+            "minLength": 0,
+            "maxLength": 20,
+            "pattern": "^[a-zA-Z0-9 \\/_.-]{0,20}$"
+          },
+          "personalHouseInc": {
+            "type": "integer",
+            "nullable": true,
+            "minimum": -9999999,
+            "maximum": 9999999
+          },
+          "emplLen": {
+            "type": "integer",
+            "nullable": true,
+            "minimum": -9999,
+            "maximum": 9999
+          },
+          "occupation": {
+            "type": "string",
+            "example": "string",
+            "nullable": true,
+            "minLength": 0,
+            "maxLength": 14,
+            "pattern": "^[a-zA-Z0-9 \\/_.-]{0,14}$"
+          },
+          "emplName": {
+            "type": "string",
+            "example": "string",
+            "nullable": true,
+            "minLength": 0,
+            "maxLength": 40,
+            "pattern": "^[a-zA-Z0-9 \\/_.-]{0,40}$"
+          },
+          "employmentType": {
+            "type": "string",
+            "example": "Y",
+            "nullable": true,
+            "minLength": 0,
+            "maxLength": 1,
+            "pattern": "^[a-zA-Z0-9 \\/_.-]{0,1}$"
+          }
+        }
+      },
+      "reqCustControls": {
+        "type": "object",
+        "additionalProperties": false,
+        "description": "Postback Request cust Controls data",
+        "nullable": true,
+        "deprecated": false,
+        "properties": {
+          "securityName": {
+            "type": "string",
+            "example": "string",
+            "nullable": true,
+            "minLength": 0,
+            "maxLength": 9,
+            "pattern": "^[a-zA-Z0-9 \\/_.-]{0,9}$"
+          },
+          "vipLevel": {
+            "type": "string",
+            "example": "Y",
+            "nullable": true,
+            "minLength": 0,
+            "maxLength": 1,
+            "pattern": "^[a-zA-Z0-9 \\/_.-]{0,1}$"
+          },
+          "employeeLevel": {
+            "type": "string",
+            "example": "Y",
+            "nullable": true,
+            "minLength": 0,
+            "maxLength": 1,
+            "pattern": "^[a-zA-Z0-9 \\/_.-]{0,1}$"
+          }
+        }
+      },
+      "reqPersonalInfo": {
+        "type": "object",
+        "additionalProperties": false,
+        "description": "Postback Request personal Info",
+        "nullable": true,
+        "deprecated": false,
+        "properties": {
+          "custControls": {
+            "$ref": "#/components/schemas/reqCustControls"
+          },
+          "poBoxIndicator": {
+            "type": "string",
+            "example": "Y",
+            "nullable": true,
+            "minLength": 0,
+            "maxLength": 1,
+            "pattern": "^[a-zA-Z0-9 \\/_.-]{0,1}$"
+          },
+          "lastName": {
+            "type": "string",
+            "example": "string",
+            "nullable": true,
+            "minLength": 0,
+            "maxLength": 32,
+            "pattern": "^[a-zA-Z0-9 \\/_.-]{0,32}$"
+          },
+          "firstName": {
+            "type": "string",
+            "example": "string",
+            "nullable": true,
+            "minLength": 0,
+            "maxLength": 32,
+            "pattern": "^[a-zA-Z0-9 \\/_.-]{0,32}$"
+          },
+          "prefix": {
+            "type": "string",
+            "example": "str",
+            "nullable": true,
+            "minLength": 0,
+            "maxLength": 5,
+            "pattern": "^[a-zA-Z0-9 \\/_.-]{0,5}$"
+          },
+          "suffix": {
+            "type": "string",
+            "example": "str",
+            "nullable": true,
+            "minLength": 0,
+            "maxLength": 5,
+            "pattern": "^[a-zA-Z0-9 \\/_.-]{0,5}$"
+          },
+          "middleName": {
+            "type": "string",
+            "example": "string",
+            "nullable": true,
+            "minLength": 0,
+            "maxLength": 32,
+            "pattern": "^[a-zA-Z0-9 \\/_.-]{0,32}$"
+          },
+          "addr1": {
+            "type": "string",
+            "example": "string",
+            "nullable": true,
+            "minLength": 0,
+            "maxLength": 32,
+            "pattern": "^[a-zA-Z0-9 \\/_.-]{0,32}$"
+          },
+          "addr2": {
+            "type": "string",
+            "example": "string",
+            "nullable": true,
+            "minLength": 0,
+            "maxLength": 32,
+            "pattern": "^[a-zA-Z0-9 \\/_.-]{0,32}$"
+          },
+          "city": {
+            "type": "string",
+            "example": "string",
+            "nullable": true,
+            "minLength": 0,
+            "maxLength": 20,
+            "pattern": "^[a-zA-Z0-9 \\/_.-]{0,20}$"
+          },
+          "state": {
+            "type": "string",
+            "example": "st",
+            "nullable": true,
+            "minLength": 0,
+            "maxLength": 2,
+            "pattern": "^[a-zA-Z0-9 \\/_.-]{0,2}$"
+          },
+          "postalCode": {
+            "type": "string",
+            "example": "string",
+            "nullable": true,
+            "minLength": 0,
+            "maxLength": 9,
+            "pattern": "^[a-zA-Z0-9 \\/_.-]{0,9}$"
+          },
+          "country": {
+            "type": "string",
+            "example": "st",
+            "nullable": true,
+            "minLength": 0,
+            "maxLength": 2,
+            "pattern": "^[a-zA-Z0-9 \\/_.-]{0,2}$"
+          },
+          "regionCode": {
+            "type": "string",
+            "example": "str",
+            "nullable": true,
+            "minLength": 0,
+            "maxLength": 3,
+            "pattern": "^[a-zA-Z0-9 \\/_.-]{0,3}$"
+          },
+          "phyAddr1": {
+            "type": "string",
+            "example": "string",
+            "nullable": true,
+            "minLength": 0,
+            "maxLength": 32,
+            "pattern": "^[a-zA-Z0-9 \\/_.-]{0,32}$"
+          },
+          "phyAddr2": {
+            "type": "string",
+            "example": "string",
+            "nullable": true,
+            "minLength": 0,
+            "maxLength": 32,
+            "pattern": "^[a-zA-Z0-9 \\/_.-]{0,32}$"
+          },
+          "phyCity": {
+            "type": "string",
+            "example": "string",
+            "nullable": true,
+            "minLength": 0,
+            "maxLength": 20,
+            "pattern": "^[a-zA-Z0-9 \\/_.-]{0,20}$"
+          },
+          "phyState": {
+            "type": "string",
+            "example": "st",
+            "nullable": true,
+            "minLength": 0,
+            "maxLength": 2,
+            "pattern": "^[a-zA-Z0-9 \\/_.-]{0,2}$"
+          },
+          "phyZip": {
+            "type": "string",
+            "example": "string",
+            "nullable": true,
+            "minLength": 0,
+            "maxLength": 9,
+            "pattern": "^[a-zA-Z0-9 \\/_.-]{0,9}$"
+          },
+          "negFileESsnIndicator": {
+            "type": "string",
+            "example": "s",
+            "nullable": true,
+            "minLength": 0,
+            "maxLength": 1,
+            "pattern": "^[a-zA-Z0-9 \\/_.-]{0,1}$"
+          },
+          "negFileSsn": {
+            "type": "string",
+            "example": "string",
+            "nullable": true,
+            "minLength": 0,
+            "maxLength": 20,
+            "pattern": "^[a-zA-Z0-9 \\/_.-]{0,20}$"
+          },
+          "negFileEmailAddress": {
+            "type": "string",
+            "example": "string",
+            "nullable": true,
+            "minLength": 0,
+            "maxLength": 200,
+            "pattern": "^[a-zA-Z0-9.@_-]{0,200}$"
+          },
+          "negFileEmailDomain": {
+            "type": "string",
+            "example": "string",
+            "nullable": true,
+            "minLength": 0,
+            "maxLength": 50,
+            "pattern": "^[a-zA-Z0-9 \\/_.-]{0,50}$"
+          },
+          "negFilePhone": {
+            "type": "string",
+            "example": "string",
+            "nullable": true,
+            "minLength": 0,
+            "maxLength": 200,
+            "pattern": "^[a-zA-Z0-9 \\/_.-]{0,200}$"
+          },
+          "negAddress": {
+            "type": "string",
+            "example": "string",
+            "nullable": true,
+            "minLength": 0,
+            "maxLength": 21,
+            "pattern": "^[a-zA-Z0-9 \\/_.-]{0,21}$"
+          },
+          "negFileRemoteHost": {
+            "type": "string",
+            "example": "string",
+            "nullable": true,
+            "minLength": 0,
+            "maxLength": 256,
+            "pattern": "^[a-zA-Z0-9.,&#\\/'\\- ]{0,256}$"
+          },
+          "negFileHitIndicator": {
+            "type": "string",
+            "example": "s",
+            "nullable": true,
+            "minLength": 0,
+            "maxLength": 1,
+            "pattern": "^[a-zA-Z0-9 \\/_.-]{0,1}$"
+          },
+          "negFileEmailAddressIndicator": {
+            "type": "string",
+            "example": "s",
+            "nullable": true,
+            "minLength": 0,
+            "maxLength": 1,
+            "pattern": "^[a-zA-Z0-9 \\/_.-]{0,1}$"
+          },
+          "negFileEmailDomainIndicator": {
+            "type": "string",
+            "example": "s",
+            "nullable": true,
+            "minLength": 0,
+            "maxLength": 1,
+            "pattern": "^[a-zA-Z0-9 \\/_.-]{0,1}$"
+          },
+          "negFileNameDob": {
+            "type": "string",
+            "example": "string",
+            "nullable": true,
+            "minLength": 0,
+            "maxLength": 108,
+            "pattern": "^[a-zA-Z0-9 \\/_.-]{0,108}$"
+          },
+          "negFileZip": {
+            "type": "string",
+            "example": "string",
+            "nullable": true,
+            "minLength": 0,
+            "maxLength": 9,
+            "pattern": "^[a-zA-Z0-9 \\/_.-]{0,9}$"
+          },
+          "negFileZipIndicator": {
+            "type": "string",
+            "example": "s",
+            "nullable": true,
+            "minLength": 0,
+            "maxLength": 1,
+            "pattern": "^[a-zA-Z0-9 \\/_.-]{0,1}$"
+          }
+        }
+      },
+      "reqApplicant": {
+        "type": "object",
+        "additionalProperties": false,
+        "description": "Postback Request applicant",
+        "nullable": true,
+        "deprecated": false,
+        "properties": {
+          "employment": {
+            "$ref": "#/components/schemas/reqEmployment"
+          },
+          "personalInfo": {
+            "$ref": "#/components/schemas/reqPersonalInfo"
+          },
+          "corrLanguage": {
+            "type": "string",
+            "example": "str",
+            "nullable": true,
+            "minLength": 0,
+            "maxLength": 3,
+            "pattern": "^[a-zA-Z0-9 \\/_.-]{0,3}$"
+          },
+          "primaryPhone": {
+            "type": "string",
+            "example": "0123456789",
+            "nullable": true,
+            "minLength": 0,
+            "maxLength": 10,
+            "pattern": "^[a-zA-Z0-9 \\/_.-]{0,10}$"
+          },
+          "dateOfBirth": {
+            "type": "string",
+            "example": "2024-05-29",
+            "nullable": true,
+            "minLength": 0,
+            "maxLength": 10,
+            "pattern": "^[0-9-]{0,10}$"
+          },
+          "email": {
+            "type": "string",
+            "example": "OA",
+            "nullable": true,
+            "minLength": 0,
+            "maxLength": 80,
+            "pattern": "^[a-zA-Z0-9.@_-]{0,80}$"
+          },
+          "resLen": {
+            "type": "integer",
+            "nullable": true,
+            "minimum": -9999999,
+            "maximum": 9999999
+          },
+          "residStatus": {
+            "type": "string",
+            "example": "Y",
+            "nullable": true,
+            "minLength": 0,
+            "maxLength": 1,
+            "pattern": "^[a-zA-Z0-9 \\/_.-]{0,1}$"
+          },
+          "mthlyRentMortgage": {
+            "type": "integer",
+            "nullable": true,
+            "minimum": -9999999,
+            "maximum": 9999999
+          },
+          "secondaryPhone": {
+            "type": "string",
+            "example": "OA",
+            "nullable": true,
+            "minLength": 0,
+            "maxLength": 10,
+            "pattern": "^[a-zA-Z0-9 \\/_.-]{0,10}$"
+          },
+          "citizenship": {
+            "type": "string",
+            "example": "st",
+            "nullable": true,
+            "minLength": 0,
+            "maxLength": 2,
+            "pattern": "^[a-zA-Z0-9 \\/_.-]{0,2}$"
+          },
+          "ficoRange": {
+            "type": "string",
+            "example": "string",
+            "nullable": true,
+            "minLength": 0,
+            "maxLength": 10,
+            "pattern": "^[a-zA-Z0-9 \\/_.-]{0,10}$"
+          },
+          "usCitizen": {
+            "type": "string",
+            "example": "Y",
+            "nullable": true,
+            "minLength": 0,
+            "maxLength": 1,
+            "pattern": "^[a-zA-Z0-9 \\/_.-]{0,1}$"
+          },
+          "negMmnInd": {
+            "type": "string",
+            "example": "Y",
+            "nullable": true,
+            "minLength": 0,
+            "maxLength": 1,
+            "pattern": "^[a-zA-Z0-9 \\/_.-]{0,1}$"
+          },
+          "savings": {
+            "type": "string",
+            "example": "Y",
+            "nullable": true,
+            "minLength": 0,
+            "maxLength": 1,
+            "pattern": "^[a-zA-Z0-9 \\/_.-]{0,1}$"
+          },
+          "loanAmountRequested": {
+            "type": "number",
+            "nullable": true,
+            "minimum": -999999999.99,
+            "maximum": 999999999.99,
+            "multipleOf": 0.01
+          },
+          "otherHouseholdIncome": {
+            "type": "integer",
+            "nullable": true,
+            "minimum": -999999999.99,
+            "maximum": 999999999.99
+          },
+          "purposeOfLoan": {
+            "type": "string",
+            "example": "Y",
+            "nullable": true,
+            "minLength": 0,
+            "maxLength": 50,
+            "pattern": "^[a-zA-Z0-9 \\/_.-]{0,50}$"
+          },
+          "termRequested": {
+            "type": "string",
+            "example": "Y",
+            "nullable": true,
+            "minLength": 0,
+            "maxLength": 3,
+            "pattern": "^[a-zA-Z0-9 \\/_.-]{0,3}$"
+          },
+          "totalAssets": {
+            "type": "number",
+            "example": 100000,
+            "nullable": true,
+            "minimum": -999999999.99,
+            "maximum": 999999999.99,
+            "multipleOf": 0.01
+          },
+          "taxId": {
+            "type": "string",
+            "example": "Y",
+            "nullable": true,
+            "minLength": 0,
+            "maxLength": 9,
+            "pattern": "^[a-zA-Z0-9 \\/_.-]{0,9}$"
+          },
+          "consolidationAmount": {
+            "type": "number",
+            "nullable": true,
+            "minimum": -999999999.99,
+            "maximum": 999999999.99,
+            "multipleOf": 0.01
+          },
+          "minLoanAmount": {
+            "type": "number",
+            "nullable": true,
+            "minimum": -999999999.99,
+            "maximum": 999999999.99,
+            "multipleOf": 0.01
+          },
+          "maxLoanAmount": {
+            "type": "number",
+            "nullable": true,
+            "minimum": -999999999.99,
+            "maximum": 999999999.99,
+            "multipleOf": 0.01
+          },
+          "checking": {
+            "type": "string",
+            "example": "Y",
+            "nullable": true,
+            "minLength": 0,
+            "maxLength": 1,
+            "pattern": "^[a-zA-Z0-9 \\/_.-]{0,1}$"
+          },
+          "country": {
+            "type": "string",
+            "example": "Y",
+            "nullable": true,
+            "minLength": 0,
+            "maxLength": 2,
+            "pattern": "^[a-zA-Z0-9 \\/_.-]{0,2}$"
+          },
+          "grossPersonalIncome": {
+            "type": "number",
+            "nullable": true,
+            "minimum": -999999999.99,
+            "maximum": 999999999.99,
+            "multipleOf": 0.01
+          },
+          "retirementFlag": {
+            "type": "string",
+            "example": "Y",
+            "nullable": true,
+            "minLength": 0,
+            "maxLength": 1,
+            "pattern": "^[a-zA-Z0-9 \\/_.-]{0,1}$"
+          },
+          "stAddrOnFile": {
+            "type": "string",
+            "example": "s",
+            "nullable": true,
+            "minLength": 0,
+            "maxLength": 1,
+            "pattern": "^^[a-zA-Z0-9 \\/_.-]{0,1}$"
+          },
+          "negFileNameDobIndicator": {
+            "type": "string",
+            "example": "s",
+            "nullable": true,
+            "minLength": 0,
+            "maxLength": 1,
+            "pattern": "^[a-zA-Z0-9 \\/_.-]{0,1}$"
+          },
+          "negFilePhoneIndicator": {
+            "type": "string",
+            "example": "s",
+            "nullable": true,
+            "minLength": 0,
+            "maxLength": 1,
+            "pattern": "^[a-zA-Z0-9 \\/_.-]{0,1}$"
+          },
+          "negAddressIndicator": {
+            "type": "string",
+            "example": "s",
+            "nullable": true,
+            "minLength": 0,
+            "maxLength": 1,
+            "pattern": "^[a-zA-Z0-9 \\/_.-]{0,1}$"
+          },
+          "negFileRemoteHostIndicator": {
+            "type": "string",
+            "example": "s",
+            "nullable": true,
+            "minLength": 0,
+            "maxLength": 1,
+            "pattern": "^[a-zA-Z0-9 \\/_.-]{0,1}$"
+          }
+        }
+      },
+      "reqQuote": {
+        "type": "object",
+        "additionalProperties": false,
+        "description": "postback request quote",
+        "nullable": true,
+        "deprecated": false,
+        "properties": {
+          "loanAmount": {
+            "type": "number",
+            "nullable": true,
+            "minimum": -999999999.99,
+            "maximum": 999999999.99,
+            "multipleOf": 0.01,
+            "example": 4000,
+            "description": "Loan Amount"
+          },
+          "term": {
+            "type": "integer",
+            "nullable": true,
+            "minimum": -999,
+            "maximum": 999,
+            "example": 36,
+            "description": "Term"
+          },
+          "apr": {
+            "type": "number",
+            "nullable": true,
+            "minimum": -999.99,
+            "maximum": 999.99,
+            "multipleOf": 0.01,
+            "example": 8.99,
+            "description": "APR"
+          }
+        }
+      },
+      "reqCyrInfo": {
+        "type": "object",
+        "additionalProperties": false,
+        "description": "Postback Request CYR Info data",
+        "nullable": true,
+        "deprecated": false,
+        "properties": {
+          "creationDate": {
+            "type": "string",
+            "example": "2024-05-29",
+            "nullable": true,
+            "minLength": 0,
+            "maxLength": 10,
+            "pattern": "^[0-9-]{0,10}$"
+          },
+          "creationTime": {
+            "type": "string",
+            "example": "10:00:00",
+            "nullable": true,
+            "minLength": 0,
+            "maxLength": 8,
+            "pattern": "^[0-9:]{0,8}$"
+          },
+          "decisionDate": {
+            "type": "string",
+            "example": "2024-05-29",
+            "nullable": true,
+            "minLength": 0,
+            "maxLength": 10,
+            "pattern": "^[0-9-]{0,10}$"
+          },
+          "decisionTime": {
+            "type": "string",
+            "example": "string",
+            "nullable": true,
+            "minLength": 0,
+            "maxLength": 8,
+            "pattern": "^[a-zA-Z0-9 \\/_.-]{0,8}$"
+          },
+          "loanAmountSelected": {
+            "type": "number",
+            "example": 0.11,
+            "nullable": true,
+            "minimum": -999999999.99,
+            "maximum": 999999999.99,
+            "multipleOf": 0.01
+          },
+          "termSelected": {
+            "type": "integer",
+            "example": 36,
+            "nullable": true,
+            "minimum": -999,
+            "maximum": 999
+          },
+          "aprSelected": {
+            "type": "number",
+            "example": 0.11,
+            "nullable": true,
+            "minimum": -999.99,
+            "maximum": 999.99,
+            "multipleOf": 0.01
+          },
+          "slidingCount": {
+            "type": "integer",
+            "nullable": true,
+            "minimum": -999,
+            "maximum": 999,
+            "example": 1
+          },
+          "offerStatus": {
+            "type": "string",
+            "nullable": true,
+            "pattern": "^[a-zA-Z0-9 \\/_.-]{0,2}$",
+            "minLength": 0,
+            "maxLength": 2,
+            "example": "OA"
+          },
+          "cylEligible": {
+            "type": "string",
+            "nullable": true,
+            "example": "Y",
+            "enum": [
+              "Y",
+              "N",
+              ""
+            ],
+            "description": "CY Eligible"
+          },
+          "quote": {
+            "type": "array",
+            "nullable": true,
+            "minItems": 0,
+            "maxItems": 3,
+            "items": {
+              "$ref": "#/components/schemas/reqQuote"
+            }
+          }
+        }
+      },
+      "reqApplicationInfo": {
+        "type": "object",
+        "additionalProperties": false,
+        "description": "Postback Request aplication Info",
+        "nullable": true,
+        "deprecated": false,
+        "properties": {
+          "selfEmployed": {
+            "type": "string",
+            "example": "s",
+            "nullable": true,
+            "minLength": 0,
+            "maxLength": 1,
+            "pattern": "^[a-zA-Z0-9 \\/_.-]{0,1}$"
+          },
+          "applicant": {
+            "$ref": "#/components/schemas/reqApplicant"
+          },
+          "cyrInfo": {
+            "$ref": "#/components/schemas/reqCyrInfo"
+          }
+        }
+      },
+      "reqAudit": {
+        "type": "object",
+        "additionalProperties": false,
+        "description": "Postback Request audit",
+        "nullable": true,
+        "deprecated": false,
+        "properties": {
+          "onQueueOp": {
+            "type": "string",
+            "example": "string",
+            "nullable": true,
+            "minLength": 0,
+            "maxLength": 16,
+            "pattern": "^[a-zA-Z0-9 \\/_.-]{0,16}$"
+          },
+          "remoteHost": {
+            "type": "string",
+            "example": "string",
+            "nullable": true,
+            "minLength": 0,
+            "maxLength": 32,
+            "pattern": "^[a-zA-Z0-9.,&#\\/'\\- ]{0,32}$"
+          },
+          "userId": {
+            "type": "string",
+            "example": "string",
+            "nullable": true,
+            "minLength": 0,
+            "maxLength": 32,
+            "pattern": "^[a-zA-Z0-9 \\/_.-]{0,32}$"
+          },
+          "password": {
+            "type": "string",
+            "example": "string",
+            "nullable": true,
+            "minLength": 0,
+            "maxLength": 32,
+            "pattern": "^[a-zA-Z0-9 \\/_.-]{0,32}$"
+          },
+          "source": {
+            "type": "string",
+            "example": "str",
+            "nullable": true,
+            "minLength": 0,
+            "maxLength": 5,
+            "pattern": "^[a-zA-Z0-9 \\/_.-]{0,5}$"
+          }
+        }
+      },
+      "reqHeader": {
+        "type": "object",
+        "additionalProperties": false,
+        "description": "Postback Request header",
+        "nullable": true,
+        "deprecated": false,
+        "properties": {
+          "userId": {
+            "type": "string",
+            "example": "string",
+            "nullable": true,
+            "minLength": 0,
+            "maxLength": 12,
+            "pattern": "^[a-zA-Z0-9 \\/_.-]{0,12}$"
+          },
+          "rcvDate": {
+            "type": "string",
+            "example": "2024-05-29",
+            "nullable": true,
+            "minLength": 0,
+            "maxLength": 10,
+            "pattern": "^[0-9-]{0,10}$"
+          }
+        }
+      },
+      "reqFlags": {
+        "type": "object",
+        "additionalProperties": false,
+        "description": "Postback Request header",
+        "nullable": true,
+        "deprecated": false,
+        "properties": {
+          "userUpdateSsn": {
+            "type": "string",
+            "example": "Y",
+            "nullable": true,
+            "minLength": 0,
+            "maxLength": 1,
+            "pattern": "^[a-zA-Z0-9 \\/_.-]{0,1}$"
+          },
+          "userUpdateAppData": {
+            "type": "string",
+            "example": "Y",
+            "nullable": true,
+            "minLength": 0,
+            "maxLength": 1,
+            "pattern": "^[a-zA-Z0-9 \\/_.-]{0,1}$"
+          },
+          "userUpdateLoanData": {
+            "type": "string",
+            "example": "Y",
+            "nullable": true,
+            "minLength": 0,
+            "maxLength": 1,
+            "pattern": "^[a-zA-Z0-9 \\/_.-]{0,1}$"
+          },
+          "userUpdateComm": {
+            "type": "string",
+            "example": "Y",
+            "nullable": true,
+            "minLength": 0,
+            "maxLength": 1,
+            "pattern": "^[a-zA-Z0-9 \\/_.-]{0,1}$"
+          },
+          "userSubmit": {
+            "type": "string",
+            "example": "Y",
+            "nullable": true,
+            "minLength": 0,
+            "maxLength": 1,
+            "pattern": "^[a-zA-Z0-9 \\/_.-]{0,1}$"
+          },
+          "sdsUpdated": {
+            "type": "string",
+            "example": "Y",
+            "nullable": true,
+            "minLength": 0,
+            "maxLength": 1,
+            "pattern": "^[a-zA-Z0-9 \\/_.-]{0,1}$"
+          },
+          "userUpdatePhoneData": {
+            "type": "string",
+            "example": "Y",
+            "nullable": true,
+            "minLength": 0,
+            "maxLength": 1,
+            "pattern": "^[a-zA-Z0-9 \\/_.-]{0,1}$"
+          },
+          "responseType": {
+            "type": "string",
+            "example": "Y",
+            "nullable": true,
+            "minLength": 0,
+            "maxLength": 1,
+            "pattern": "^[a-zA-Z0-9 \\/_.-]{0,1}$"
+          }
+        }
+      },
+      "reqIdentity": {
+        "type": "object",
+        "additionalProperties": false,
+        "description": "Postback Request identity",
+        "nullable": true,
+        "deprecated": false,
+        "properties": {
+          "required": {
+            "type": "string",
+            "example": "Y",
+            "nullable": true,
+            "minLength": 0,
+            "maxLength": 1,
+            "pattern": "^[a-zA-Z0-9 \\/_.-]{0,1}$"
+          }
+        }
+      },
+      "reqChecks": {
+        "type": "object",
+        "additionalProperties": false,
+        "description": "Postback Request checks",
+        "nullable": true,
+        "deprecated": false,
+        "properties": {
+          "identity": {
+            "$ref": "#/components/schemas/reqIdentity"
+          }
+        }
+      },
+      "miscReq": {
+        "type": "object",
+        "additionalProperties": false,
+        "description": "Postback Request miscellaneous",
+        "nullable": true,
+        "deprecated": false,
+        "properties": {
+          "marketAssignment": {
+            "type": "string",
+            "example": "Y",
+            "nullable": true,
+            "minLength": 0,
+            "maxLength": 1,
+            "pattern": "^[a-zA-Z0-9 \\/_.-]{0,1}$"
+          },
+          "subSegment": {
+            "type": "string",
+            "example": "Y",
+            "nullable": true,
+            "minLength": 0,
+            "maxLength": 1,
+            "pattern": "^[a-zA-Z0-9 \\/_.-]{0,1}$"
+          },
+          "reserved4": {
+            "type": "string",
+            "example": "Y",
+            "nullable": true,
+            "minLength": 0,
+            "maxLength": 16,
+            "pattern": "^[a-zA-Z0-9 \\/_.-]{0,16}$"
+          }
+        }
+      },
+      "DECISIONRSP": {
+        "type": "object",
+        "additionalProperties": false,
+        "description": "Postback Request decisionRsp",
+        "nullable": true,
+        "deprecated": false,
+        "properties": {
+          "verification": {
+            "$ref": "#/components/schemas/reqVerification"
+          },
+          "creditAcctInfo": {
+            "$ref": "#/components/schemas/reqCreditAcctInfo"
+          },
+          "applicationInfo": {
+            "$ref": "#/components/schemas/reqApplicationInfo"
+          },
+          "audit": {
+            "$ref": "#/components/schemas/reqAudit"
+          },
+          "header": {
+            "$ref": "#/components/schemas/reqHeader"
+          },
+          "flags": {
+            "$ref": "#/components/schemas/reqFlags"
+          },
+          "checks": {
+            "$ref": "#/components/schemas/reqChecks"
+          },
+          "misc": {
+            "$ref": "#/components/schemas/miscReq"
+          },
+          "appStatus": {
+            "type": "string",
+            "example": "1",
+            "nullable": true,
+            "minLength": 0,
+            "maxLength": 1,
+            "pattern": "^[a-zA-Z0-9 \\/_.-]{0,1}$"
+          },
+          "approvalType": {
+            "type": "string",
+            "example": "Y",
+            "nullable": true,
+            "minLength": 0,
+            "maxLength": 1,
+            "pattern": "^[a-zA-Z0-9 \\/_.-]{0,1}$"
+          },
+          "reDecision": {
+            "type": "string",
+            "example": "Y",
+            "nullable": true,
+            "minLength": 0,
+            "maxLength": 1,
+            "pattern": "^[a-zA-Z0-9 \\/_.-]{0,1}$"
+          },
+          "databaseSuccess": {
+            "type": "string",
+            "example": "Y",
+            "nullable": true,
+            "minLength": 0,
+            "maxLength": 1,
+            "pattern": "^[a-zA-Z0-9 \\/_.-]{0,1}$"
+          },
+          "appId": {
+            "type": "string",
+            "example": "123456789",
+            "nullable": true,
+            "minLength": 0,
+            "maxLength": 9,
+            "pattern": "^[a-zA-Z0-9 \\/_.-]{0,9}$"
+          },
+          "requestType": {
+            "type": "string",
+            "example": "XSC",
+            "nullable": true,
+            "minLength": 0,
+            "maxLength": 3,
+            "pattern": "^[a-zA-Z0-9 \\/_.-]{0,3}$"
+          },
+          "appRef": {
+            "type": "string",
+            "example": "string",
+            "nullable": true,
+            "minLength": 0,
+            "maxLength": 32,
+            "pattern": "^[a-zA-Z0-9 \\/_.-]{0,32}$"
+          }
+        }
+      },
+      "PostbackRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "description": "Postback Request",
+        "nullable": true,
+        "deprecated": false,
+        "properties": {
+          "application": {
+            "type": "object",
+            "additionalProperties": false,
+            "description": "Application",
+            "nullable": true,
+            "deprecated": false,
+            "properties": {
+              "decisionRsp": {
+                "$ref": "#/components/schemas/DECISIONRSP"
+              }
+            }
+          }
+        }
+      },
+      "content-models_PostbackRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "description": "Application Request",
+        "nullable": true,
+        "deprecated": false,
+        "required": [
+          "data"
+        ],
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/PostbackRequest"
+          }
+        }
+      },
+      "PostbackResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "description": "PostbackResponse Response",
+        "nullable": true,
+        "deprecated": false,
+        "properties": {
+          "applicationResponse": {
+            "type": "object",
+            "additionalProperties": false,
+            "description": "Application Response",
+            "nullable": true,
+            "deprecated": false,
+            "properties": {
+              "date": {
+                "type": "string",
+                "example": "2024-05-29",
+                "nullable": true,
+                "minLength": 0,
+                "maxLength": 10,
+                "pattern": "^[0-9-]{0,10}$"
+              },
+              "status": {
+                "type": "string",
+                "example": "string",
+                "nullable": true,
+                "minLength": 0,
+                "maxLength": 128,
+                "pattern": "^[a-zA-Z0-9 \\/_.-]{0,128}$"
+              }
+            }
+          }
+        }
+      },
+      "content-models_PostbackResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "description": "Application Response",
+        "nullable": true,
+        "deprecated": false,
+        "required": [
+          "data"
+        ],
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/PostbackResponse"
+          }
+        }
+      },
+      "ErrorType": {
+        "description": "Message details - additional operation execution information.",
+        "type": "object",
+        "additionalProperties": true,
+        "required": [
+          "id",
+          "code",
+          "title"
+        ],
+        "properties": {
+          "id": {
+            "description": "Generated message identifier for particular request, helping to locate server logs.",
+            "type": "string",
+            "pattern": "^[a-zA-Z0-9\\-]{1,50}$",
+            "minLength": 1,
+            "maxLength": 50,
+            "example": "9709-4675-2456-7801"
+          },
+          "code": {
+            "description": "Machine readable, unique code of the message related to particular case within operation execution.",
+            "type": "string",
+            "pattern": "^[a-zA-Z0-9_]{1,100}$",
+            "minLength": 1,
+            "maxLength": 100,
+            "example": "ACCOUNT_NUMBER_NOT_FOUND"
+          },
+          "title": {
+            "description": "Short description of the error. Not for displaying purposes.",
+            "type": "string",
+            "pattern": "^[a-zA-Z0-9\\s\"=,.']{1,250}$",
+            "minLength": 1,
+            "maxLength": 250,
+            "example": "The authorization credentials required for this request are invalid."
+          },
+          "detail": {
+            "description": "Provides additional low-level details about the error to assist with troubleshooting. Not for displaying purposes.",
+            "type": "string",
+            "pattern": "^[a-zA-Z0-9\\s\"=,.']{1,250}$",
+            "minLength": 1,
+            "maxLength": 250
+          },
+          "meta": {
+            "description": "Object containing non-standard meta-information about the error.",
+            "type": "object",
+            "additionalProperties": true
+          }
+        }
+      },
+      "ErrorResponseType": {
+        "type": "object",
+        "additionalProperties": false,
+        "deprecated": false,
+        "nullable": false,
+        "description": "An API error response.\n",
+        "properties": {
+          "meta": {
+            "type": "object",
+            "description": "Contains Non-standard meta information",
+            "additionalProperties": true
+          },
+          "errors": {
+            "description": "Contains one or more error messages and is mutually exclusive with the data item.\nThis will not be returned in success scenarios.\n",
+            "type": "array",
+            "minItems": 0,
+            "maxItems": 50,
+            "items": {
+              "$ref": "#/components/schemas/ErrorType"
+            }
+          }
+        }
+      }
+    },
+    "parameters": {
+      "Correlation-ID": {
+        "name": "Correlation-ID",
+        "in": "header",
+        "required": true,
+        "deprecated": false,
+        "allowEmptyValue": false,
+        "description": "Unique end-to-end trace ID. The initiating system (such as a Channel or \nBatch Job), must generate this unique ID, then this must be passed \nthrough the API call stack. This is required to maintain compliance with the current Barclays REST Standard.\n",
+        "schema": {
+          "type": "string",
+          "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+          "minLength": 36,
+          "maxLength": 36
+        },
+        "example": "7d444840-9dc0-11d1-b245-5ffdce74fad2"
+      },
+      "X-B3-TraceId": {
+        "name": "X-B3-TraceId",
+        "in": "header",
+        "required": true,
+        "deprecated": false,
+        "allowEmptyValue": false,
+        "description": "Unique end-to-end trace ID. The initiating system (such as a Channel or \nBatch Job), must generate this unique ID, then this must be passed \nthrough the API call stack.\n",
+        "schema": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{32}$",
+          "minLength": 32,
+          "maxLength": 32
+        },
+        "example": "463ac35c9f6413ad48485a3953bb6124"
+      },
+      "X-B3-SpanId": {
+        "name": "X-B3-SpanId",
+        "in": "header",
+        "required": true,
+        "deprecated": false,
+        "description": "Identifies the span in the trace tree. Every request has its own SpanId \nand is generated by the Callerof the API..\n",
+        "schema": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{16}$",
+          "minLength": 16,
+          "maxLength": 16
+        },
+        "example": "a2fb4a1d1a96d312"
+      },
+      "X-B3-ParentSpanId": {
+        "name": "X-B3-ParentSpanId",
+        "in": "header",
+        "required": false,
+        "deprecated": false,
+        "description": "Identifies the parent span in the trace tree. This is not present for the \ninitiating system as that is the root of the tree. The Caller of the API \ncopies this from the X-B3-SpanId header of the originating request.\n",
+        "schema": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{16}$",
+          "minLength": 16,
+          "maxLength": 16
+        },
+        "example": "0020000000000001"
+      },
+      "X-B3-Sampled": {
+        "name": "X-B3-Sampled",
+        "in": "header",
+        "required": false,
+        "deprecated": false,
+        "description": "Sampling is a mechanism to reduce the volume of data that ends up in the tracing\nsystem. 1 mean accept sampling, 0 mean deny.\nDetails https://github.com/openzipkin/b3-propagation\n",
+        "schema": {
+          "type": "integer",
+          "format": "int32",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "example": 1
+      },
+      "X-Channel-Id": {
+        "name": "X-Channel-Id",
+        "in": "header",
+        "required": false,
+        "deprecated": false,
+        "description": "The channel that initiated the call. Must be passed through the API stack.\n",
+        "schema": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9\\-_]{3,20}$",
+          "minLength": 3,
+          "maxLength": 20
+        },
+        "example": "ccd"
+      },
+      "X-Partner-Id": {
+        "name": "X-Partner-Id",
+        "in": "header",
+        "required": false,
+        "deprecated": false,
+        "description": "The ID of the external third-party partner initiating the call. This is set by \nthe External API Gateway and must be passed through the API stack.\n",
+        "schema": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9\\-_]{3,20}$",
+          "minLength": 3,
+          "maxLength": 20
+        },
+        "example": "salesforce"
+      },
+      "X-User-Id": {
+        "name": "X-User-Id",
+        "in": "header",
+        "required": false,
+        "deprecated": false,
+        "description": "The username of the person making the request. For the CCD, this is the CCD\nActive Directory user. For the servicing website, this is the username of the user. This\ninformation must be maintained between calls.\nThis username will be used when performing inserts or updates in the database.\n",
+        "schema": {
+          "type": "string",
+          "pattern": "^[\\S]{1,30}$",
+          "minLength": 1,
+          "maxLength": 30
+        },
+        "example": "johnDoe"
+      }
+    },
+    "headers": {
+      "Cache-Control": {
+        "description": "GIS mandatory response header. This is added by the Cognac sidecar.",
+        "schema": {
+          "type": "string",
+          "pattern": "^no-cache, no-store, must-revalidate$",
+          "minLength": 35,
+          "maxLength": 35,
+          "nullable": false,
+          "deprecated": false,
+          "default": "no-cache, no-store, must-revalidate",
+          "example": "no-cache, no-store, must-revalidate"
+        }
+      }
+    },
+    "responses": {
+      "InternalServerError": {
+        "description": "Server encountered an error processing request. This should not \nhappen normally, but it is a generic error message, given when \nno more specific message is suitable.\n",
+        "headers": {
+          "Cache-Control": {
+            "$ref": "#/components/headers/Cache-Control"
+          }
+        },
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorResponseType"
+            },
+            "examples": {
+              "example-error-500": {
+                "$ref": "#/components/examples/example-error-500"
+              }
+            }
+          }
+        }
+      },
+      "Forbidden": {
+        "description": "The user is not permitted to access the requested operation and it cannot be completed.\n",
+        "headers": {
+          "Cache-Control": {
+            "$ref": "#/components/headers/Cache-Control"
+          }
+        },
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorResponseType"
+            },
+            "examples": {
+              "example-error-403": {
+                "$ref": "#/components/examples/example-error-403"
+              }
+            }
+          }
+        }
+      },
+      "NotFound": {
+        "description": "Server has not found a resource with that URI. This may be \ntemporary and permanent condition. This status code is \ncommonly used when the server does not wish to reveal \nexactly why the request has been refused, or when no other \nresponse is applicable.\n",
+        "headers": {
+          "Cache-Control": {
+            "$ref": "#/components/headers/Cache-Control"
+          }
+        },
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorResponseType"
+            },
+            "examples": {
+              "example-error-404:": {
+                "$ref": "#/components/examples/example-error-404"
+              }
+            }
+          }
+        }
+      },
+      "BadRequest": {
+        "description": "The request could not be understood by the server due to malformed \nsyntax. The client SHOULD NOT repeat the request without \nmodifications.\n",
+        "headers": {
+          "Cache-Control": {
+            "$ref": "#/components/headers/Cache-Control"
+          }
+        },
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorResponseType"
+            },
+            "examples": {
+              "example-error-400-bad-request": {
+                "$ref": "#/components/examples/example-error-400-bad-request"
+              }
+            }
+          }
+        }
+      },
+      "Unauthorized": {
+        "description": "The user could not be authenticated for this request.\n",
+        "headers": {
+          "Cache-Control": {
+            "$ref": "#/components/headers/Cache-Control"
+          }
+        },
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorResponseType"
+            },
+            "examples": {
+              "example-error-401": {
+                "$ref": "#/components/examples/example-error-401"
+              }
+            }
+          }
+        }
+      },
+      "TooManyRequests": {
+        "description": "When a server is under attack or just receiving a very \nlarge number of requests from a single party, responding \nto each with a 429 status code will consume resources. \nTherefore, servers may drop connections or take other steps\ninstead of responding with the 429 status code, when limiting\nresource usage.\n",
+        "headers": {
+          "Cache-Control": {
+            "$ref": "#/components/headers/Cache-Control"
+          }
+        },
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorResponseType"
+            },
+            "examples": {
+              "example-error-429": {
+                "$ref": "#/components/examples/example-error-429"
+              }
+            }
+          }
+        }
+      },
+      "ServiceUnavailable": {
+        "description": "temporary maintenance of service, try again later. The implication \nis that this is a temporary condition which will be alleviated \nafter some delay. If known, the length of the delay will be \nindicated in a Retry-After header. If no Retry-After is given, \nthe client SHOULD handle the response as it would for a 500 response. \nNote: The existence of the 503 status code does not imply that a \nserver will use it when becoming overloaded. Servers may simply \nrefuse the connection.\n",
+        "headers": {
+          "Cache-Control": {
+            "$ref": "#/components/headers/Cache-Control"
+          }
+        },
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorResponseType"
+            },
+            "examples": {
+              "example-error-503": {
+                "$ref": "#/components/examples/example-error-503"
+              }
+            }
+          }
+        }
+      },
+      "PostbackResponse": {
+        "description": "Account record list.",
+        "headers": {
+          "Cache-Control": {
+            "$ref": "#/components/headers/Cache-Control"
+          }
+        },
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/content-models_PostbackResponse"
+            },
+            "examples": {
+              "PostbackResponse": {
+                "$ref": "#/components/examples/PostbackRes"
+              }
+            }
+          }
+        }
+      }
+    },
+    "examples": {
+      "PostbackReq": {
+        "value": {
+          "data": {
+            "application": {
+              "decisionRsp": {
+                "applicationInfo": {
+                  "applicant": {
+                    "personalInfo": {
+                      "addr1": "",
+                      "addr2": "PREAPPPSTCAKAFAF",
+                      "city": "TOPANGA",
+                      "state": "CA",
+                      "postalCode": "90290",
+                      "regionCode": "",
+                      "lastName": "BROWN",
+                      "firstName": "CONNIE",
+                      "prefix": "",
+                      "middleName": "mi",
+                      "custControls": {
+                        "securityName": "",
+                        "employeeLevel": "",
+                        "vipLevel": ""
+                      },
+                      "suffix": "JR",
+                      "poBoxIndicator": "",
+                      "phyAddr1": "",
+                      "phyAddr2": "",
+                      "phyCity": "",
+                      "phyState": "",
+                      "phyZip": ""
+                    },
+                    "country": "",
+                    "employment": {
+                      "emplLen": 1,
+                      "occupation": "28",
+                      "personalHouseInc": 100,
+                      "emplName": "",
+                      "sourceOfIncome": "EMPLOYED"
+                    },
+                    "email": "dn@barclaycardus.com",
+                    "dateOfBirth": "1983-11-27",
+                    "primaryPhone": "",
+                    "resLen": 120,
+                    "residStatus": "Y",
+                    "mthlyRentMortgage": 1000,
+                    "taxId": "666600683",
+                    "secondaryPhone": "",
+                    "citizenship": "",
+                    "ficoRange": "",
+                    "usCitizen": "",
+                    "savings": "",
+                    "checking": "",
+                    "corrLanguage": "",
+                    "grossPersonalIncome": 100,
+                    "otherHouseholdIncome": 100,
+                    "purposeOfLoan": "",
+                    "retirementFlag": "",
+                    "totalAssets": null,
+                    "loanAmountRequested": 9000,
+                    "termRequested": "",
+                    "consolidationAmount": 10,
+                    "maxLoanAmount": 4000,
+                    "minLoanAmount": 1000,
+                    "negMmnInd": ""
+                  },
+                  "cyrInfo": {
+                    "loanAmountSelected": 1000,
+                    "termSelected": 36,
+                    "aprSelected": 6.99,
+                    "decisionDate": "2022-02-14",
+                    "decisionTime": "130102",
+                    "creationDate": "2021-02-12",
+                    "creationTime": "162638",
+                    "offerStatus": "OA",
+                    "slidingCount": 1,
+                    "cylEligible": "N",
+                    "quote": [
+                      {
+                        "loanAmount": 4000,
+                        "term": 36,
+                        "apr": 7.99
+                      },
+                      {
+                        "loanAmount": 4000,
+                        "term": 48,
+                        "apr": 8.99
+                      },
+                      {
+                        "loanAmount": 4000,
+                        "term": 60,
+                        "apr": 9.99
+                      }
+                    ]
+                  }
+                },
+                "appId": "40551103",
+                "header": {
+                  "rcvDate": "2021-02-12",
+                  "userId": ""
+                },
+                "appRef": "478ccecf6e2738d389a62ec7421237c2",
+                "creditAcctInfo": {
+                  "clOfferStatus": "SP",
+                  "overrideCd": "",
+                  "pcApprRgBDate": "2022-02-14",
+                  "communication": {
+                    "addressDocNotAvailable": "",
+                    "addressDocReceived": "",
+                    "addressDocRequested": "N",
+                    "allDocumentProvided": "N",
+                    "assetDocNotAvailable": "",
+                    "assetDocReceived": "",
+                    "assetDocRequested": "N",
+                    "conversationNeeded": "N",
+                    "conversationType": "",
+                    "fraudDoc1": "",
+                    "fraudDoc2": "",
+                    "fraudDoc3": "",
+                    "fraudDoc4": "",
+                    "fraudDoc5": "",
+                    "incomeDocRequested": "N",
+                    "incomeDocReceived": "",
+                    "incomeDocNotAvailable": "",
+                    "fraudDocRequested": "N",
+                    "fraudDocReceived": "",
+                    "fraudDocNotAvailable": "",
+                    "letter": {
+                      "clientId": 1,
+                      "correspondenceId": "RBPNSC",
+                      "operatorId": "",
+                      "primaryCustomerName": "",
+                      "appAddressLine1": "",
+                      "appAddressLine2": "",
+                      "appCity": "",
+                      "appState": "",
+                      "zipPlus4": "",
+                      "countryName": "",
+                      "tsysProductCode": "",
+                      "rdapPartnerId": "",
+                      "corrHoldCode": "",
+                      "languageCode": "",
+                      "letterRequestDate": null,
+                      "acqAppNum": "",
+                      "declinePhone": "",
+                      "printDeclinePhone": "",
+                      "declineAddressLine1": "",
+                      "declineAddressLine2": "",
+                      "declineCity": "",
+                      "declineState": "",
+                      "declineZip": "",
+                      "declineHours": "",
+                      "printDoddFrankFlag": "",
+                      "bureauCounter": 1,
+                      "cbFicoScore": 0,
+                      "scoreDate": "2022-02-14",
+                      "reasons": {
+                        "reason": [
+                          {
+                            "code": "",
+                            "text": ""
+                          },
+                          {
+                            "code": "",
+                            "text": ""
+                          },
+                          {
+                            "code": "",
+                            "text": ""
+                          },
+                          {
+                            "code": "",
+                            "text": ""
+                          }
+                        ]
+                      },
+                      "factors": {
+                        "factor": [
+                          {
+                            "code": "",
+                            "text": ""
+                          },
+                          {
+                            "code": "",
+                            "text": ""
+                          },
+                          {
+                            "code": "",
+                            "text": ""
+                          },
+                          {
+                            "code": "",
+                            "text": ""
+                          },
+                          {
+                            "code": "",
+                            "text": ""
+                          }
+                        ]
+                      },
+                      "bureaus": {
+                        "bureau": [
+                          {
+                            "name": "TransUnion",
+                            "address": "P.O. Box 2000",
+                            "csz": "Chester, PA 19013",
+                            "phone": "1-800-916-8800",
+                            "url": "www.transunion.com"
+                          }
+                        ]
+                      }
+                    }
+                  },
+                  "callLetters": "N",
+                  "counterOfferFlag": "N",
+                  "counterOfferDate": "2022-02-14",
+                  "creditPending": "N",
+                  "fraudPending": "N",
+                  "offerRejectFlag": "N",
+                  "offerRejectDate": "2022-02-14",
+                  "reactivationFlag": "N",
+                  "reconsiderFlag": "N",
+                  "reactivationDate": "2022-02-14",
+                  "reconsiderDate": "2022-02-14",
+                  "creditInfo": {
+                    "fico": 0,
+                    "ficoDate": "2022-02-14",
+                    "inqScoreImpact": "",
+                    "credBureau": "T",
+                    "ficoFactor1": 0,
+                    "ficoFactor2": 0,
+                    "ficoFactor3": 0,
+                    "ficoFactor4": 0,
+                    "idaCo50Date": "2022-02-14",
+                    "idaCo50Time": "",
+                    "idaCo50Score": "",
+                    "idaCo50ResultCode1": "",
+                    "idaCo50ResultCode2": "",
+                    "idaCo50ResultCode3": "",
+                    "idaCo50ResultCode4": "",
+                    "idaCo50ResultCode5": "",
+                    "idaCo50ResultCode6": ""
+                  },
+                  "finalMmP": 2,
+                  "recomDecisionStatus": "A",
+                  "recommendedDecRsnCd": "",
+                  "responseTimeStamp": "",
+                  "requestTimeStamp": "",
+                  "error": {
+                    "errorCode": [],
+                    "errorMsg": ""
+                  },
+                  "finalDisbursContAmt": 5000,
+                  "finalDisbursmtInd": "",
+                  "finalApr": 12.99,
+                  "finalTermInterval": 36,
+                  "finalLoanAmount": 5000,
+                  "preciseIdScore": "0",
+                  "decStatus": "P",
+                  "appDate": "2022-01-10",
+                  "offerExtendedDate": "2022-02-14",
+                  "offerLapseDate": "2022-02-14",
+                  "letterCd": ""
+                },
+                "requestType": "PSC",
+                "appStatus": "1",
+                "audit": {
+                  "onQueueOp": "",
+                  "remoteHost": "",
+                  "userId": "",
+                  "password": "",
+                  "source": ""
+                },
+                "approvalType": "",
+                "reDecision": "",
+                "databaseSuccess": "F",
+                "verification": {
+                  "verificationStatus": "",
+                  "veridCustom1": "",
+                  "veridCustom2": "",
+                  "verificationReq": "N"
+                },
+                "misc": {
+                  "marketAssignment": "",
+                  "subSegment": ""
+                },
+                "flags": {
+                  "responseType": "A",
+                  "userUpdateSsn": "",
+                  "userUpdateAppData": "",
+                  "userUpdateLoanData": "",
+                  "userUpdateComm": "",
+                  "userUpdatePhoneData": "",
+                  "userSubmit": "",
+                  "sdsUpdated": "Y"
+                },
+                "checks": {
+                  "identity": {
+                    "required": "N"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "PostbackRes": {
+        "value": {
+          "data": {
+            "applicationResponse": {
+              "date": "2022-04-19",
+              "status": "OK"
+            }
+          }
+        }
+      },
+      "example-error-400-bad-request": {
+        "value": {
+          "errors": [
+            {
+              "id": "9709-4675-2456-7801",
+              "code": "BAD_REQUEST",
+              "title": "The request is invalid or not properly formed."
+            }
+          ]
+        }
+      },
+      "example-error-404": {
+        "value": {
+          "errors": [
+            {
+              "id": "9709-4675-2456-7801",
+              "code": "RESOURCE_NOT_FOUND",
+              "title": "The requested operation failed because a resource associated with the request could not be found."
+            }
+          ]
+        }
+      },
+      "example-error-500": {
+        "value": {
+          "errors": [
+            {
+              "id": "9709-4675-2456-7801",
+              "code": "INTERNAL_SERVER_ERROR",
+              "title": "The request failed due to an internal error."
+            }
+          ]
+        }
+      },
+      "example-error-503": {
+        "value": {
+          "errors": [
+            {
+              "id": "9709-4675-2456-7801",
+              "code": "SERVICE_UNAVAILABLE",
+              "title": "The server is currently unavailable"
+            }
+          ]
+        }
+      },
+      "example-error-403": {
+        "value": {
+          "errors": [
+            {
+              "id": "9709-4675-2456-7801",
+              "code": "ACCESS_FORBIDDEN",
+              "title": "The user is not permitted to access the requested operation and it cannot be completed."
+            }
+          ]
+        }
+      },
+      "example-error-401": {
+        "value": {
+          "errors": [
+            {
+              "id": "9709-4675-2456-7801",
+              "code": "AUTHENTICATION_ERROR",
+              "title": "The user could not be authenticated for this request."
+            }
+          ]
+        }
+      },
+      "example-error-429": {
+        "value": {
+          "errors": [
+            {
+              "id": "9709-4675-2456-7801",
+              "code": "TOO_MANY_REQUESTS",
+              "title": "Too many requests"
+            }
+          ]
+        }
+      }
+    },
+    "requestBodies": {
+      "PostbackRequest": {
+        "description": "Postback Request Data",
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/content-models_PostbackRequest"
+            },
+            "examples": {
+              "PostbackRequest": {
+                "$ref": "#/components/examples/PostbackReq"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
